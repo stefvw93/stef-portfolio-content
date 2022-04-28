@@ -1,5 +1,11 @@
 import { list } from "@keystone-6/core";
-import { text, password } from "@keystone-6/core/fields";
+import {
+  text,
+  password,
+  relationship,
+  select,
+  image,
+} from "@keystone-6/core/fields";
 import { Lists } from ".keystone/types";
 import { document } from "@keystone-6/fields-document";
 
@@ -28,6 +34,21 @@ export const lists: Lists = {
       title: text(),
       slug: text({ isIndexed: "unique", isFilterable: true }),
       content: document({ formatting: true, dividers: true, links: true }),
+      image: image({}),
+      layout: select({
+        options: ["big", "small"],
+      }),
+      categories: select({
+        isIndexed: true,
+        options: ["home", "about", "work", "contact"],
+      }),
+      traits: relationship({ ref: "Trait", many: true }),
+    },
+  }),
+
+  Trait: list({
+    fields: {
+      title: text(),
     },
   }),
 };

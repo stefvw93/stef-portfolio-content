@@ -98,15 +98,62 @@ type Post {
   title: String
   slug: String
   content: Post_content_Document
+  image: ImageFieldOutput
+  layout: String
+  categories: String
+  traits(
+    where: TraitWhereInput! = {}
+    orderBy: [TraitOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Trait!]
+  traitsCount(where: TraitWhereInput! = {}): Int
 }
 
 type Post_content_Document {
   document(hydrateRelationships: Boolean! = false): JSON!
 }
 
+interface ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  ref: String!
+  url: String!
+}
+
+enum ImageExtension {
+  jpg
+  png
+  webp
+  gif
+}
+
 input PostWhereUniqueInput {
   id: ID
   slug: String
+}
+
+type LocalImageFieldOutput implements ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  ref: String!
+  url: String!
+}
+
+type CloudImageFieldOutput implements ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  ref: String!
+  url: String!
 }
 
 input PostWhereInput {
@@ -116,18 +163,78 @@ input PostWhereInput {
   id: IDFilter
   title: StringFilter
   slug: StringFilter
+  layout: StringNullableFilter
+  categories: StringNullableFilter
+  traits: TraitManyRelationFilter
+}
+
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: NestedStringNullableFilter
+}
+
+input TraitManyRelationFilter {
+  every: TraitWhereInput
+  some: TraitWhereInput
+  none: TraitWhereInput
 }
 
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
   slug: OrderDirection
+  layout: OrderDirection
+  categories: OrderDirection
 }
 
 input PostUpdateInput {
   title: String
   slug: String
   content: JSON
+  image: ImageFieldInput
+  layout: String
+  categories: String
+  traits: TraitRelateToManyForUpdateInput
+}
+
+input ImageFieldInput {
+  upload: Upload
+  ref: String
+}
+
+"""
+The `Upload` scalar type represents a file upload.
+"""
+scalar Upload
+
+input TraitRelateToManyForUpdateInput {
+  disconnect: [TraitWhereUniqueInput!]
+  set: [TraitWhereUniqueInput!]
+  create: [TraitCreateInput!]
+  connect: [TraitWhereUniqueInput!]
 }
 
 input PostUpdateArgs {
@@ -139,6 +246,50 @@ input PostCreateInput {
   title: String
   slug: String
   content: JSON
+  image: ImageFieldInput
+  layout: String
+  categories: String
+  traits: TraitRelateToManyForCreateInput
+}
+
+input TraitRelateToManyForCreateInput {
+  create: [TraitCreateInput!]
+  connect: [TraitWhereUniqueInput!]
+}
+
+type Trait {
+  id: ID!
+  title: String
+}
+
+input TraitWhereUniqueInput {
+  id: ID
+}
+
+input TraitWhereInput {
+  AND: [TraitWhereInput!]
+  OR: [TraitWhereInput!]
+  NOT: [TraitWhereInput!]
+  id: IDFilter
+  title: StringFilter
+}
+
+input TraitOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+}
+
+input TraitUpdateInput {
+  title: String
+}
+
+input TraitUpdateArgs {
+  where: TraitWhereUniqueInput!
+  data: TraitUpdateInput!
+}
+
+input TraitCreateInput {
+  title: String
 }
 
 """
@@ -162,6 +313,12 @@ type Mutation {
   updatePosts(data: [PostUpdateArgs!]!): [Post]
   deletePost(where: PostWhereUniqueInput!): Post
   deletePosts(where: [PostWhereUniqueInput!]!): [Post]
+  createTrait(data: TraitCreateInput!): Trait
+  createTraits(data: [TraitCreateInput!]!): [Trait]
+  updateTrait(where: TraitWhereUniqueInput!, data: TraitUpdateInput!): Trait
+  updateTraits(data: [TraitUpdateArgs!]!): [Trait]
+  deleteTrait(where: TraitWhereUniqueInput!): Trait
+  deleteTraits(where: [TraitWhereUniqueInput!]!): [Trait]
   endSession: Boolean!
   authenticateUserWithPassword(
     email: String!
@@ -208,6 +365,14 @@ type Query {
   ): [Post!]
   post(where: PostWhereUniqueInput!): Post
   postsCount(where: PostWhereInput! = {}): Int
+  traits(
+    where: TraitWhereInput! = {}
+    orderBy: [TraitOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Trait!]
+  trait(where: TraitWhereUniqueInput!): Trait
+  traitsCount(where: TraitWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
