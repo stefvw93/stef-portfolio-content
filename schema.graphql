@@ -3,8 +3,8 @@
 
 type User {
   id: ID!
-  name: String
   email: String
+  name: String
   password: PasswordState
 }
 
@@ -22,8 +22,8 @@ input UserWhereInput {
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
   id: IDFilter
-  name: StringFilter
   email: StringFilter
+  name: StringFilter
 }
 
 input IDFilter {
@@ -67,8 +67,8 @@ input NestedStringFilter {
 
 input UserOrderByInput {
   id: OrderDirection
-  name: OrderDirection
   email: OrderDirection
+  name: OrderDirection
 }
 
 enum OrderDirection {
@@ -77,8 +77,8 @@ enum OrderDirection {
 }
 
 input UserUpdateInput {
-  name: String
   email: String
+  name: String
   password: String
 }
 
@@ -88,8 +88,8 @@ input UserUpdateArgs {
 }
 
 input UserCreateInput {
-  name: String
   email: String
+  name: String
   password: String
 }
 
@@ -98,62 +98,16 @@ type Post {
   title: String
   slug: String
   content: Post_content_Document
-  image: ImageFieldOutput
-  layout: String
-  categories: String
-  traits(
-    where: TraitWhereInput! = {}
-    orderBy: [TraitOrderByInput!]! = []
-    take: Int
-    skip: Int! = 0
-  ): [Trait!]
-  traitsCount(where: TraitWhereInput! = {}): Int
+  resume: Resume
 }
 
 type Post_content_Document {
   document(hydrateRelationships: Boolean! = false): JSON!
 }
 
-interface ImageFieldOutput {
-  id: ID!
-  filesize: Int!
-  width: Int!
-  height: Int!
-  extension: ImageExtension!
-  ref: String!
-  url: String!
-}
-
-enum ImageExtension {
-  jpg
-  png
-  webp
-  gif
-}
-
 input PostWhereUniqueInput {
   id: ID
   slug: String
-}
-
-type LocalImageFieldOutput implements ImageFieldOutput {
-  id: ID!
-  filesize: Int!
-  width: Int!
-  height: Int!
-  extension: ImageExtension!
-  ref: String!
-  url: String!
-}
-
-type CloudImageFieldOutput implements ImageFieldOutput {
-  id: ID!
-  filesize: Int!
-  width: Int!
-  height: Int!
-  extension: ImageExtension!
-  ref: String!
-  url: String!
 }
 
 input PostWhereInput {
@@ -163,78 +117,26 @@ input PostWhereInput {
   id: IDFilter
   title: StringFilter
   slug: StringFilter
-  layout: StringNullableFilter
-  categories: StringNullableFilter
-  traits: TraitManyRelationFilter
-}
-
-input StringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: NestedStringNullableFilter
-}
-
-input NestedStringNullableFilter {
-  equals: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
-  gt: String
-  gte: String
-  contains: String
-  startsWith: String
-  endsWith: String
-  not: NestedStringNullableFilter
-}
-
-input TraitManyRelationFilter {
-  every: TraitWhereInput
-  some: TraitWhereInput
-  none: TraitWhereInput
+  resume: ResumeWhereInput
 }
 
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
   slug: OrderDirection
-  layout: OrderDirection
-  categories: OrderDirection
 }
 
 input PostUpdateInput {
   title: String
   slug: String
   content: JSON
-  image: ImageFieldInput
-  layout: String
-  categories: String
-  traits: TraitRelateToManyForUpdateInput
+  resume: ResumeRelateToOneForUpdateInput
 }
 
-input ImageFieldInput {
-  upload: Upload
-  ref: String
-}
-
-"""
-The `Upload` scalar type represents a file upload.
-"""
-scalar Upload
-
-input TraitRelateToManyForUpdateInput {
-  disconnect: [TraitWhereUniqueInput!]
-  set: [TraitWhereUniqueInput!]
-  create: [TraitCreateInput!]
-  connect: [TraitWhereUniqueInput!]
+input ResumeRelateToOneForUpdateInput {
+  create: ResumeCreateInput
+  connect: ResumeWhereUniqueInput
+  disconnect: Boolean
 }
 
 input PostUpdateArgs {
@@ -246,50 +148,245 @@ input PostCreateInput {
   title: String
   slug: String
   content: JSON
-  image: ImageFieldInput
-  layout: String
-  categories: String
-  traits: TraitRelateToManyForCreateInput
+  resume: ResumeRelateToOneForCreateInput
 }
 
-input TraitRelateToManyForCreateInput {
-  create: [TraitCreateInput!]
-  connect: [TraitWhereUniqueInput!]
+input ResumeRelateToOneForCreateInput {
+  create: ResumeCreateInput
+  connect: ResumeWhereUniqueInput
 }
 
-type Trait {
+type Resume {
   id: ID!
-  title: String
+  experiences(
+    where: ExperienceWhereInput! = {}
+    orderBy: [ExperienceOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Experience!]
+  experiencesCount(where: ExperienceWhereInput! = {}): Int
 }
 
-input TraitWhereUniqueInput {
+input ResumeWhereUniqueInput {
   id: ID
 }
 
-input TraitWhereInput {
-  AND: [TraitWhereInput!]
-  OR: [TraitWhereInput!]
-  NOT: [TraitWhereInput!]
+input ResumeWhereInput {
+  AND: [ResumeWhereInput!]
+  OR: [ResumeWhereInput!]
+  NOT: [ResumeWhereInput!]
   id: IDFilter
-  title: StringFilter
+  experiences: ExperienceManyRelationFilter
 }
 
-input TraitOrderByInput {
+input ExperienceManyRelationFilter {
+  every: ExperienceWhereInput
+  some: ExperienceWhereInput
+  none: ExperienceWhereInput
+}
+
+input ResumeOrderByInput {
   id: OrderDirection
-  title: OrderDirection
 }
 
-input TraitUpdateInput {
-  title: String
+input ResumeUpdateInput {
+  experiences: ExperienceRelateToManyForUpdateInput
 }
 
-input TraitUpdateArgs {
-  where: TraitWhereUniqueInput!
-  data: TraitUpdateInput!
+input ExperienceRelateToManyForUpdateInput {
+  disconnect: [ExperienceWhereUniqueInput!]
+  set: [ExperienceWhereUniqueInput!]
+  create: [ExperienceCreateInput!]
+  connect: [ExperienceWhereUniqueInput!]
 }
 
-input TraitCreateInput {
-  title: String
+input ResumeUpdateArgs {
+  where: ResumeWhereUniqueInput!
+  data: ResumeUpdateInput!
+}
+
+input ResumeCreateInput {
+  experiences: ExperienceRelateToManyForCreateInput
+}
+
+input ExperienceRelateToManyForCreateInput {
+  create: [ExperienceCreateInput!]
+  connect: [ExperienceWhereUniqueInput!]
+}
+
+type Experience {
+  id: ID!
+  year: Int
+  role: String
+  employer: Employer
+  skills(
+    where: SkillWhereInput! = {}
+    orderBy: [SkillOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Skill!]
+  skillsCount(where: SkillWhereInput! = {}): Int
+  description: String
+}
+
+input ExperienceWhereUniqueInput {
+  id: ID
+}
+
+input ExperienceWhereInput {
+  AND: [ExperienceWhereInput!]
+  OR: [ExperienceWhereInput!]
+  NOT: [ExperienceWhereInput!]
+  id: IDFilter
+  year: IntNullableFilter
+  role: StringFilter
+  employer: EmployerWhereInput
+  skills: SkillManyRelationFilter
+}
+
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntNullableFilter
+}
+
+input SkillManyRelationFilter {
+  every: SkillWhereInput
+  some: SkillWhereInput
+  none: SkillWhereInput
+}
+
+input ExperienceOrderByInput {
+  id: OrderDirection
+  year: OrderDirection
+  role: OrderDirection
+}
+
+input ExperienceUpdateInput {
+  year: Int
+  role: String
+  employer: EmployerRelateToOneForUpdateInput
+  skills: SkillRelateToManyForUpdateInput
+}
+
+input EmployerRelateToOneForUpdateInput {
+  create: EmployerCreateInput
+  connect: EmployerWhereUniqueInput
+  disconnect: Boolean
+}
+
+input SkillRelateToManyForUpdateInput {
+  disconnect: [SkillWhereUniqueInput!]
+  set: [SkillWhereUniqueInput!]
+  create: [SkillCreateInput!]
+  connect: [SkillWhereUniqueInput!]
+}
+
+input ExperienceUpdateArgs {
+  where: ExperienceWhereUniqueInput!
+  data: ExperienceUpdateInput!
+}
+
+input ExperienceCreateInput {
+  year: Int
+  role: String
+  employer: EmployerRelateToOneForCreateInput
+  skills: SkillRelateToManyForCreateInput
+}
+
+input EmployerRelateToOneForCreateInput {
+  create: EmployerCreateInput
+  connect: EmployerWhereUniqueInput
+}
+
+input SkillRelateToManyForCreateInput {
+  create: [SkillCreateInput!]
+  connect: [SkillWhereUniqueInput!]
+}
+
+type Employer {
+  id: ID!
+  name: String
+  url: String
+  description: String
+}
+
+input EmployerWhereUniqueInput {
+  id: ID
+}
+
+input EmployerWhereInput {
+  AND: [EmployerWhereInput!]
+  OR: [EmployerWhereInput!]
+  NOT: [EmployerWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  url: StringFilter
+  description: StringFilter
+}
+
+input EmployerOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  url: OrderDirection
+  description: OrderDirection
+}
+
+input EmployerUpdateInput {
+  name: String
+  url: String
+  description: String
+}
+
+input EmployerUpdateArgs {
+  where: EmployerWhereUniqueInput!
+  data: EmployerUpdateInput!
+}
+
+input EmployerCreateInput {
+  name: String
+  url: String
+  description: String
+}
+
+type Skill {
+  id: ID!
+  name: String
+}
+
+input SkillWhereUniqueInput {
+  id: ID
+}
+
+input SkillWhereInput {
+  AND: [SkillWhereInput!]
+  OR: [SkillWhereInput!]
+  NOT: [SkillWhereInput!]
+  id: IDFilter
+  name: StringFilter
+}
+
+input SkillOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+}
+
+input SkillUpdateInput {
+  name: String
+}
+
+input SkillUpdateArgs {
+  where: SkillWhereUniqueInput!
+  data: SkillUpdateInput!
+}
+
+input SkillCreateInput {
+  name: String
 }
 
 """
@@ -313,12 +410,36 @@ type Mutation {
   updatePosts(data: [PostUpdateArgs!]!): [Post]
   deletePost(where: PostWhereUniqueInput!): Post
   deletePosts(where: [PostWhereUniqueInput!]!): [Post]
-  createTrait(data: TraitCreateInput!): Trait
-  createTraits(data: [TraitCreateInput!]!): [Trait]
-  updateTrait(where: TraitWhereUniqueInput!, data: TraitUpdateInput!): Trait
-  updateTraits(data: [TraitUpdateArgs!]!): [Trait]
-  deleteTrait(where: TraitWhereUniqueInput!): Trait
-  deleteTraits(where: [TraitWhereUniqueInput!]!): [Trait]
+  createResume(data: ResumeCreateInput!): Resume
+  createResumes(data: [ResumeCreateInput!]!): [Resume]
+  updateResume(where: ResumeWhereUniqueInput!, data: ResumeUpdateInput!): Resume
+  updateResumes(data: [ResumeUpdateArgs!]!): [Resume]
+  deleteResume(where: ResumeWhereUniqueInput!): Resume
+  deleteResumes(where: [ResumeWhereUniqueInput!]!): [Resume]
+  createExperience(data: ExperienceCreateInput!): Experience
+  createExperiences(data: [ExperienceCreateInput!]!): [Experience]
+  updateExperience(
+    where: ExperienceWhereUniqueInput!
+    data: ExperienceUpdateInput!
+  ): Experience
+  updateExperiences(data: [ExperienceUpdateArgs!]!): [Experience]
+  deleteExperience(where: ExperienceWhereUniqueInput!): Experience
+  deleteExperiences(where: [ExperienceWhereUniqueInput!]!): [Experience]
+  createEmployer(data: EmployerCreateInput!): Employer
+  createEmployers(data: [EmployerCreateInput!]!): [Employer]
+  updateEmployer(
+    where: EmployerWhereUniqueInput!
+    data: EmployerUpdateInput!
+  ): Employer
+  updateEmployers(data: [EmployerUpdateArgs!]!): [Employer]
+  deleteEmployer(where: EmployerWhereUniqueInput!): Employer
+  deleteEmployers(where: [EmployerWhereUniqueInput!]!): [Employer]
+  createSkill(data: SkillCreateInput!): Skill
+  createSkills(data: [SkillCreateInput!]!): [Skill]
+  updateSkill(where: SkillWhereUniqueInput!, data: SkillUpdateInput!): Skill
+  updateSkills(data: [SkillUpdateArgs!]!): [Skill]
+  deleteSkill(where: SkillWhereUniqueInput!): Skill
+  deleteSkills(where: [SkillWhereUniqueInput!]!): [Skill]
   endSession: Boolean!
   authenticateUserWithPassword(
     email: String!
@@ -343,8 +464,8 @@ type UserAuthenticationWithPasswordFailure {
 }
 
 input CreateInitialUserInput {
-  name: String
   email: String
+  name: String
   password: String
 }
 
@@ -365,14 +486,38 @@ type Query {
   ): [Post!]
   post(where: PostWhereUniqueInput!): Post
   postsCount(where: PostWhereInput! = {}): Int
-  traits(
-    where: TraitWhereInput! = {}
-    orderBy: [TraitOrderByInput!]! = []
+  resumes(
+    where: ResumeWhereInput! = {}
+    orderBy: [ResumeOrderByInput!]! = []
     take: Int
     skip: Int! = 0
-  ): [Trait!]
-  trait(where: TraitWhereUniqueInput!): Trait
-  traitsCount(where: TraitWhereInput! = {}): Int
+  ): [Resume!]
+  resume(where: ResumeWhereUniqueInput!): Resume
+  resumesCount(where: ResumeWhereInput! = {}): Int
+  experiences(
+    where: ExperienceWhereInput! = {}
+    orderBy: [ExperienceOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Experience!]
+  experience(where: ExperienceWhereUniqueInput!): Experience
+  experiencesCount(where: ExperienceWhereInput! = {}): Int
+  employers(
+    where: EmployerWhereInput! = {}
+    orderBy: [EmployerOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Employer!]
+  employer(where: EmployerWhereUniqueInput!): Employer
+  employersCount(where: EmployerWhereInput! = {}): Int
+  skills(
+    where: SkillWhereInput! = {}
+    orderBy: [SkillOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Skill!]
+  skill(where: SkillWhereUniqueInput!): Skill
+  skillsCount(where: SkillWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
