@@ -55,7 +55,7 @@ export const lists: Lists = {
         field: graphql.field({
           type: graphql.String,
           resolve(item) {
-            return [item.year, item.company].join(" - ");
+            return [item.year, item.role].join(" - ");
           },
         }),
       }),
